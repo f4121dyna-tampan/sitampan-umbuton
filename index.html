@@ -1,0 +1,266 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SITAMPAN UM BUTON</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root {
+  --maroon:#741b32;
+  --dark:#481020;
+  --gold:#d5ad62;
+  --bg:#f5f3f2;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;font-family:Arial,sans-serif;
+  background:var(--bg);color:#29232a;
+}
+header{
+  background:var(--dark);color:white;
+  padding:20px 6%;display:flex;
+  align-items:center;justify-content:space-between;
+}
+.brand{font-size:21px;font-weight:bold}
+.brand small{display:block;color:var(--gold);
+font-size:11px;margin-top:5px;letter-spacing:1px}
+main{max-width:1100px;margin:45px auto;padding:15px}
+.login{
+  max-width:430px;margin:55px auto;
+  background:white;padding:35px;
+  border-radius:12px;
+  box-shadow:0 5px 25px #00000012;
+}
+h2{color:var(--maroon)}
+label{display:block;margin:18px 0 7px;font-size:13px}
+input{
+  width:100%;padding:13px;border:1px solid #ddd;
+  border-radius:6px;font-size:14px;
+}
+button{
+  border:0;padding:13px 20px;border-radius:6px;
+  cursor:pointer;font-weight:bold;
+}
+.primary{background:var(--maroon);color:white;width:100%;margin-top:22px}
+.primary:hover{background:var(--dark)}
+.gold{color:var(--gold)}
+.muted{color:#777;font-size:13px;line-height:1.6}
+.hidden{display:none!important}
+.grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:18px;margin:25px 0;
+}
+.card{
+  background:white;padding:22px;border-radius:10px;
+  border-left:4px solid var(--gold);
+}
+.card strong{display:block;color:var(--maroon);font-size:25px;margin-top:12px}
+nav{display:flex;gap:10px;flex-wrap:wrap;margin:20px 0}
+nav button{background:white;color:var(--maroon);border:1px solid #ddd}
+nav button.active{background:var(--maroon);color:white}
+.panel{background:white;padding:25px;border-radius:10px}
+footer{text-align:center;padding:30px;color:#888;font-size:12px}
+#message{font-size:13px;margin-top:15px;color:#a21c35}
+@media(max-width:650px){
+ .grid{grid-template-columns:1fr}
+ header{padding:18px}
+ main{margin:15px auto}
+ .login{margin:30px auto;padding:25px}
+}
+</style>
+</head>
+<body>
+
+<header>
+ <div class="brand">
+  SITAMPAN <span class="gold">UM BUTON</span>
+  <small>SISTEM INFORMASI TES MASUK DAN PENILAIAN AKADEMIK</small>
+ </div>
+ <div style="font-size:12px">TA 2027/2028</div>
+</header>
+
+<main>
+
+<section id="loginPage" class="login">
+ <h2>Administrator Login</h2>
+ <p class="muted">Silakan masuk menggunakan akun administrator SITAMPAN.</p>
+
+ <form id="loginForm">
+  <label>Email Administrator</label>
+  <input type="email" id="email" required placeholder="Email administrator">
+
+  <label>Password</label>
+  <input type="password" id="password" required placeholder="Masukkan password">
+
+  <button class="primary" id="loginButton" type="submit">
+   MASUK KE SISTEM
+  </button>
+ </form>
+ <div id="message"></div>
+ <p class="muted" style="margin-top:25px">
+  Universitas Muhammadiyah Buton<br>
+  UPT ADMISI
+ </p>
+</section>
+
+<section id="dashboard" class="hidden">
+ <h2>Dashboard Administrator</h2>
+ <p class="muted">Selamat datang di Sistem SITAMPAN UM Buton.</p>
+
+ <nav>
+  <button class="active" onclick="showPanel('home',this)">Dashboard</button>
+  <button onclick="showPanel('peserta',this)">Peserta</button>
+  <button onclick="showPanel('soal',this)">Bank Soal</button>
+  <button onclick="showPanel('ujian',this)">Pelaksanaan Tes</button>
+  <button onclick="showPanel('hasil',this)">Hasil Seleksi</button>
+  <button onclick="showPanel('pengaturan',this)">Pengaturan</button>
+  <button onclick="logout()">Keluar</button>
+ </nav>
+
+ <div id="home" class="panel">
+  <h2>Ringkasan Sistem</h2>
+  <div class="grid">
+   <div class="card">Total Peserta<strong id="totalPeserta">0</strong></div>
+   <div class="card">Bank Soal<strong id="totalSoal">0</strong></div>
+   <div class="card">Ujian Selesai<strong id="totalUjian">0</strong></div>
+  </div>
+  <p class="muted">Sistem Informasi Tes Masuk UM Buton Tahun Akademik 2027/2028.</p>
+ </div>
+
+ <div id="peserta" class="panel hidden">
+  <h2>Manajemen Peserta</h2>
+  <p class="muted">Modul pengelolaan dan verifikasi peserta akan diaktifkan pada tahap berikutnya.</p>
+ </div>
+
+ <div id="soal" class="panel hidden">
+  <h2>Bank Soal</h2>
+  <p class="muted">Modul pengelolaan soal, kategori, bobot, dan kunci jawaban.</p>
+ </div>
+
+ <div id="ujian" class="panel hidden">
+  <h2>Pelaksanaan Tes</h2>
+  <p class="muted">Modul pengaturan jadwal, durasi, dan pelaksanaan ujian.</p>
+ </div>
+
+ <div id="hasil" class="panel hidden">
+  <h2>Hasil Seleksi</h2>
+  <p class="muted">Modul nilai, status kelulusan, koreksi nilai, dan sertifikat.</p>
+ </div>
+
+ <div id="pengaturan" class="panel hidden">
+  <h2>Pengaturan Sistem</h2>
+  <p class="muted">Pengaturan ambang kelulusan, bobot penilaian, dan administrasi.</p>
+ </div>
+</section>
+
+</main>
+
+<footer>
+ SITAMPAN UM BUTON © 2027/2028<br>
+Universitas Muhammadiyah Buton – UPT ADMISI
+</footer>
+
+<script>
+const SUPABASE_URL = "https://atgaowgcpxxcbhtsrja.supabase.co";
+const SUPABASE_KEY = "sb_publishable_X2LYWKgu0QU2Pz2UXrR7LQ_xTacQWyC";
+
+const db = window.supabase.createClient(
+ SUPABASE_URL,
+ SUPABASE_KEY
+);
+
+const loginPage = document.getElementById("loginPage");
+const dashboard = document.getElementById("dashboard");
+const message = document.getElementById("message");
+
+document.getElementById("loginForm").addEventListener("submit", async (e)=>{
+ e.preventDefault();
+ const button = document.getElementById("loginButton");
+ button.disabled = true;
+ button.textContent = "MEMERIKSA AKUN...";
+ message.textContent = "";
+
+ try {
+  const {data,error} = await db.auth.signInWithPassword({
+   email: document.getElementById("email").value.trim(),
+   password: document.getElementById("password").value
+  });
+
+  if(error) throw error;
+
+  const {data:profile,error:profileError} = await db
+   .from("admin_profiles")
+   .select("full_name,role,is_active")
+   .eq("id",data.user.id)
+   .maybeSingle();
+
+  if(profileError) throw profileError;
+
+  if(!profile || !profile.is_active){
+   await db.auth.signOut();
+   throw new Error("Akun tidak memiliki akses administrator aktif.");
+  }
+
+  if(!["super_admin","admin","operator"].includes(profile.role)){
+   await db.auth.signOut();
+   throw new Error("Hak akses tidak diizinkan.");
+  }
+
+  openDashboard(profile);
+
+ } catch(error) {
+  message.textContent = error.message;
+ } finally {
+  button.disabled = false;
+  button.textContent = "MASUK KE SISTEM";
+ }
+});
+
+function openDashboard(profile){
+ loginPage.classList.add("hidden");
+ dashboard.classList.remove("hidden");
+ document.querySelector("#home p").textContent =
+  "Selamat datang, " + profile.full_name +
+  " | Hak akses: " + profile.role;
+}
+
+function showPanel(id,button){
+ document.querySelectorAll("#dashboard .panel").forEach(p=>{
+  p.classList.add("hidden");
+ });
+ document.getElementById(id).classList.remove("hidden");
+ document.querySelectorAll("nav button").forEach(b=>{
+  b.classList.remove("active");
+ });
+ button.classList.add("active");
+}
+
+async function logout(){
+ await db.auth.signOut();
+ dashboard.classList.add("hidden");
+ loginPage.classList.remove("hidden");
+ document.getElementById("password").value="";
+ message.textContent="";
+}
+
+(async()=>{
+ const {data:{session}} = await db.auth.getSession();
+ if(session){
+  const {data:profile} = await db
+   .from("admin_profiles")
+   .select("full_name,role,is_active")
+   .eq("id",session.user.id)
+   .maybeSingle();
+
+  if(profile && profile.is_active){
+   openDashboard(profile);
+  }else{
+   await db.auth.signOut();
+  }
+ }
+})();
+</script>
+</body>
+</html>
