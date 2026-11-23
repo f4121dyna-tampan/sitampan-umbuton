@@ -24,8 +24,10 @@ header{
   align-items:center;justify-content:space-between;
 }
 .brand{font-size:21px;font-weight:bold}
-.brand small{display:block;color:var(--gold);
-font-size:11px;margin-top:5px;letter-spacing:1px}
+.brand small{
+  display:block;color:var(--gold);
+  font-size:11px;margin-top:5px;letter-spacing:1px
+}
 main{max-width:1100px;margin:45px auto;padding:15px}
 .login{
   max-width:430px;margin:55px auto;
@@ -43,11 +45,22 @@ button{
   border:0;padding:13px 20px;border-radius:6px;
   cursor:pointer;font-weight:bold;
 }
-.primary{background:var(--maroon);color:white;width:100%;margin-top:22px}
+button:disabled{opacity:.6;cursor:not-allowed}
+.primary{
+  background:var(--maroon);color:white;
+  width:100%;margin-top:22px
+}
 .primary:hover{background:var(--dark)}
 .gold{color:var(--gold)}
 .muted{color:#777;font-size:13px;line-height:1.6}
 .hidden{display:none!important}
+.forgot{
+  display:block;width:100%;margin-top:14px;
+  padding:8px;background:transparent;
+  color:var(--maroon);font-size:13px;
+  text-align:right;
+}
+.forgot:hover{text-decoration:underline}
 .grid{
   display:grid;grid-template-columns:repeat(3,1fr);
   gap:18px;margin:25px 0;
@@ -56,18 +69,38 @@ button{
   background:white;padding:22px;border-radius:10px;
   border-left:4px solid var(--gold);
 }
-.card strong{display:block;color:var(--maroon);font-size:25px;margin-top:12px}
+.card strong{
+  display:block;color:var(--maroon);
+  font-size:25px;margin-top:12px;
+}
 nav{display:flex;gap:10px;flex-wrap:wrap;margin:20px 0}
 nav button{background:white;color:var(--maroon);border:1px solid #ddd}
 nav button.active{background:var(--maroon);color:white}
 .panel{background:white;padding:25px;border-radius:10px}
 footer{text-align:center;padding:30px;color:#888;font-size:12px}
 #message{font-size:13px;margin-top:15px;color:#a21c35}
+.status-success{color:#16834a!important}
+.recovery-overlay{
+  position:fixed;inset:0;background:var(--bg);
+  display:flex;align-items:center;justify-content:center;
+  z-index:9999;padding:20px;
+}
+.recovery-card{
+  background:white;padding:35px;border-radius:12px;
+  width:100%;max-width:430px;
+  box-shadow:0 5px 25px #00000012;
+}
+.recovery-card h2{margin-top:0}
+.recovery-card button{width:100%}
+#recoveryMessage{
+  font-size:13px;line-height:1.5;margin-top:15px;
+}
 @media(max-width:650px){
  .grid{grid-template-columns:1fr}
  header{padding:18px}
  main{margin:15px auto}
  .login{margin:30px auto;padding:25px}
+ .recovery-card{padding:25px}
 }
 </style>
 </head>
@@ -85,20 +118,30 @@ footer{text-align:center;padding:30px;color:#888;font-size:12px}
 
 <section id="loginPage" class="login">
  <h2>Administrator Login</h2>
- <p class="muted">Silakan masuk menggunakan akun administrator SITAMPAN.</p>
+ <p class="muted">
+  Silakan masuk menggunakan akun administrator SITAMPAN.
+ </p>
 
  <form id="loginForm">
   <label>Email Administrator</label>
-  <input type="email" id="email" required placeholder="Email administrator">
+  <input type="email" id="email" required
+   placeholder="Email administrator">
 
   <label>Password</label>
-  <input type="password" id="password" required placeholder="Masukkan password">
+  <input type="password" id="password" required
+   placeholder="Masukkan password">
 
   <button class="primary" id="loginButton" type="submit">
    MASUK KE SISTEM
   </button>
  </form>
+
+ <button type="button" class="forgot" id="forgotButton">
+  Lupa Password? Reset Password
+ </button>
+
  <div id="message"></div>
+
  <p class="muted" style="margin-top:25px">
   Universitas Muhammadiyah Buton<br>
   UPT ADMISI
@@ -122,36 +165,54 @@ footer{text-align:center;padding:30px;color:#888;font-size:12px}
  <div id="home" class="panel">
   <h2>Ringkasan Sistem</h2>
   <div class="grid">
-   <div class="card">Total Peserta<strong id="totalPeserta">0</strong></div>
-   <div class="card">Bank Soal<strong id="totalSoal">0</strong></div>
-   <div class="card">Ujian Selesai<strong id="totalUjian">0</strong></div>
+   <div class="card">
+    Total Peserta<strong id="totalPeserta">0</strong>
+   </div>
+   <div class="card">
+    Bank Soal<strong id="totalSoal">0</strong>
+   </div>
+   <div class="card">
+    Ujian Selesai<strong id="totalUjian">0</strong>
+   </div>
   </div>
-  <p class="muted">Sistem Informasi Tes Masuk UM Buton Tahun Akademik 2027/2028.</p>
+  <p class="muted">
+   Sistem Informasi Tes Masuk UM Buton Tahun Akademik 2027/2028.
+  </p>
  </div>
 
  <div id="peserta" class="panel hidden">
   <h2>Manajemen Peserta</h2>
-  <p class="muted">Modul pengelolaan dan verifikasi peserta akan diaktifkan pada tahap berikutnya.</p>
+  <p class="muted">
+   Modul pengelolaan dan verifikasi peserta akan diaktifkan pada tahap berikutnya.
+  </p>
  </div>
 
  <div id="soal" class="panel hidden">
   <h2>Bank Soal</h2>
-  <p class="muted">Modul pengelolaan soal, kategori, bobot, dan kunci jawaban.</p>
+  <p class="muted">
+   Modul pengelolaan soal, kategori, bobot, dan kunci jawaban.
+  </p>
  </div>
 
  <div id="ujian" class="panel hidden">
   <h2>Pelaksanaan Tes</h2>
-  <p class="muted">Modul pengaturan jadwal, durasi, dan pelaksanaan ujian.</p>
+  <p class="muted">
+   Modul pengaturan jadwal, durasi, dan pelaksanaan ujian.
+  </p>
  </div>
 
  <div id="hasil" class="panel hidden">
   <h2>Hasil Seleksi</h2>
-  <p class="muted">Modul nilai, status kelulusan, koreksi nilai, dan sertifikat.</p>
+  <p class="muted">
+   Modul nilai, status kelulusan, koreksi nilai, dan sertifikat.
+  </p>
  </div>
 
  <div id="pengaturan" class="panel hidden">
   <h2>Pengaturan Sistem</h2>
-  <p class="muted">Pengaturan ambang kelulusan, bobot penilaian, dan administrasi.</p>
+  <p class="muted">
+   Pengaturan ambang kelulusan, bobot penilaian, dan administrasi.
+  </p>
  </div>
 </section>
 
@@ -159,12 +220,50 @@ footer{text-align:center;padding:30px;color:#888;font-size:12px}
 
 <footer>
  SITAMPAN UM BUTON © 2027/2028<br>
-Universitas Muhammadiyah Buton – UPT ADMISI
+ Universitas Muhammadiyah Buton – UPT ADMISI
 </footer>
 
+<!-- FORM RESET PASSWORD -->
+<section id="recoveryBox" class="recovery-overlay hidden">
+ <div class="recovery-card">
+  <h2>Buat Password Baru</h2>
+  <p class="muted">
+   Silakan masukkan password administrator yang baru.
+  </p>
+
+  <form id="recoveryForm">
+   <label>Password Baru</label>
+   <input id="newPassword" type="password"
+    required minlength="8"
+    placeholder="Minimal 8 karakter">
+
+   <label>Konfirmasi Password Baru</label>
+   <input id="confirmPassword" type="password"
+    required minlength="8"
+    placeholder="Ulangi password baru">
+
+   <button type="submit" class="primary" id="savePasswordButton">
+    SIMPAN PASSWORD BARU
+   </button>
+  </form>
+
+  <div id="recoveryMessage"></div>
+ </div>
+</section>
+
 <script>
-const SUPABASE_URL = "https://atgaowgcpxxcbhtsrja.supabase.co";
-const SUPABASE_KEY = "sb_publishable_X2LYWKgu0QU2Pz2UXrR7LQ_xTacQWyC";
+/* =====================================
+   KONFIGURASI SUPABASE
+===================================== */
+
+const SUPABASE_URL =
+ "https://atgaowgcpxxcbhtsrja.supabase.co";
+
+const SUPABASE_KEY =
+ "sb_publishable_X2LYWKgu0QU2Pz2UXrR7LQ_xTacQWyC";
+
+const SITE_URL =
+ "https://f4121dyna-tampan.github.io/sitampan-umbuton/";
 
 const db = window.supabase.createClient(
  SUPABASE_URL,
@@ -174,15 +273,24 @@ const db = window.supabase.createClient(
 const loginPage = document.getElementById("loginPage");
 const dashboard = document.getElementById("dashboard");
 const message = document.getElementById("message");
+const recoveryBox = document.getElementById("recoveryBox");
 
-document.getElementById("loginForm").addEventListener("submit", async (e)=>{
+/* =====================================
+   LOGIN ADMINISTRATOR
+===================================== */
+
+document.getElementById("loginForm")
+.addEventListener("submit", async (e)=>{
  e.preventDefault();
+
  const button = document.getElementById("loginButton");
+
  button.disabled = true;
  button.textContent = "MEMERIKSA AKUN...";
  message.textContent = "";
 
  try {
+
   const {data,error} = await db.auth.signInWithPassword({
    email: document.getElementById("email").value.trim(),
    password: document.getElementById("password").value
@@ -200,7 +308,9 @@ document.getElementById("loginForm").addEventListener("submit", async (e)=>{
 
   if(!profile || !profile.is_active){
    await db.auth.signOut();
-   throw new Error("Akun tidak memiliki akses administrator aktif.");
+   throw new Error(
+    "Akun tidak memiliki akses administrator aktif."
+   );
   }
 
   if(!["super_admin","admin","operator"].includes(profile.role)){
@@ -211,117 +321,247 @@ document.getElementById("loginForm").addEventListener("submit", async (e)=>{
   openDashboard(profile);
 
  } catch(error) {
+
   message.textContent = error.message;
+
  } finally {
+
   button.disabled = false;
   button.textContent = "MASUK KE SISTEM";
+
  }
+
 });
 
+/* =====================================
+   LUPA PASSWORD
+===================================== */
+
+document.getElementById("forgotButton")
+.addEventListener("click", async ()=>{
+
+ const email = document.getElementById("email").value.trim();
+ const button = document.getElementById("forgotButton");
+
+ message.className = "";
+ message.textContent = "";
+
+ if(!email){
+  message.textContent =
+   "Masukkan email administrator terlebih dahulu.";
+  document.getElementById("email").focus();
+  return;
+ }
+
+ button.disabled = true;
+ button.textContent = "MENGIRIM TAUTAN...";
+
+ try {
+
+  const {error} = await db.auth.resetPasswordForEmail(
+   email,
+   {
+    redirectTo: SITE_URL
+   }
+  );
+
+  if(error) throw error;
+
+  message.className = "status-success";
+  message.textContent =
+   "Permintaan reset password berhasil dikirim. " +
+   "Silakan periksa email administrator, termasuk folder Spam.";
+
+ } catch(error) {
+
+  message.textContent =
+   "Gagal mengirim tautan: " + error.message;
+
+ } finally {
+
+  button.disabled = false;
+  button.textContent = "Lupa Password? Reset Password";
+
+ }
+
+});
+
+/* =====================================
+   DETEKSI TAUTAN PEMULIHAN
+===================================== */
+
+db.auth.onAuthStateChange((event, session)=>{
+
+ if(event === "PASSWORD_RECOVERY"){
+  recoveryBox.classList.remove("hidden");
+  document.getElementById("recoveryMessage").textContent = "";
+ }
+
+});
+
+/* =====================================
+   SIMPAN PASSWORD BARU
+===================================== */
+
+document.getElementById("recoveryForm")
+.addEventListener("submit", async (e)=>{
+
+ e.preventDefault();
+
+ const password =
+  document.getElementById("newPassword").value;
+
+ const confirm =
+  document.getElementById("confirmPassword").value;
+
+ const msg =
+  document.getElementById("recoveryMessage");
+
+ const button =
+  document.getElementById("savePasswordButton");
+
+ msg.textContent = "";
+ msg.className = "";
+
+ if(password.length < 8){
+  msg.textContent = "Password minimal 8 karakter.";
+  return;
+ }
+
+ if(password !== confirm){
+  msg.textContent = "Konfirmasi password tidak sama.";
+  return;
+ }
+
+ button.disabled = true;
+ button.textContent = "MENYIMPAN PASSWORD...";
+
+ try {
+
+  const {error} = await db.auth.updateUser({
+   password: password
+  });
+
+  if(error) throw error;
+
+  await db.auth.signOut();
+
+  recoveryBox.classList.add("hidden");
+  dashboard.classList.add("hidden");
+  loginPage.classList.remove("hidden");
+
+  document.getElementById("password").value = "";
+  document.getElementById("recoveryForm").reset();
+
+  message.className = "status-success";
+  message.textContent =
+   "Password berhasil diperbarui. Silakan login menggunakan password baru.";
+
+ } catch(error) {
+
+  msg.textContent = error.message;
+
+ } finally {
+
+  button.disabled = false;
+  button.textContent = "SIMPAN PASSWORD BARU";
+
+ }
+
+});
+
+/* =====================================
+   DASHBOARD
+===================================== */
+
 function openDashboard(profile){
+
  loginPage.classList.add("hidden");
  dashboard.classList.remove("hidden");
+
  document.querySelector("#home p").textContent =
   "Selamat datang, " + profile.full_name +
   " | Hak akses: " + profile.role;
+
 }
 
 function showPanel(id,button){
- document.querySelectorAll("#dashboard .panel").forEach(p=>{
+
+ document.querySelectorAll("#dashboard .panel")
+ .forEach(p=>{
   p.classList.add("hidden");
  });
+
  document.getElementById(id).classList.remove("hidden");
- document.querySelectorAll("nav button").forEach(b=>{
+
+ document.querySelectorAll("#dashboard nav button")
+ .forEach(b=>{
   b.classList.remove("active");
  });
+
  button.classList.add("active");
+
 }
+
+/* =====================================
+   LOGOUT
+===================================== */
 
 async function logout(){
+
  await db.auth.signOut();
+
  dashboard.classList.add("hidden");
  loginPage.classList.remove("hidden");
- document.getElementById("password").value="";
- message.textContent="";
+
+ document.getElementById("password").value = "";
+ message.textContent = "";
+
 }
 
-db.auth.onAuthStateChange((event, session) => {
-  if (event === "PASSWORD_RECOVERY") {
-    document.body.insertAdjacentHTML("beforeend", `
-      <div id="recoveryBox" style="
-        position:fixed;inset:0;background:#f5f3f2;
-        display:flex;align-items:center;justify-content:center;
-        z-index:9999;font-family:Arial,sans-serif">
-        <div style="
-          background:white;padding:35px;border-radius:12px;
-          width:90%;max-width:400px">
-          <h2 style="color:#741b32">Buat Password Baru</h2>
-          <p>Silakan masukkan password administrator yang baru.</p>
-          <form id="recoveryForm">
-            <input id="newPassword" type="password"
-              placeholder="Password baru" required minlength="8"
-              style="width:100%;padding:13px;margin:12px 0">
-            <input id="confirmPassword" type="password"
-              placeholder="Ulangi password baru" required minlength="8"
-              style="width:100%;padding:13px;margin:12px 0">
-            <button type="submit" style="
-              width:100%;padding:14px;background:#741b32;
-              color:white;border:0;border-radius:6px">
-              SIMPAN PASSWORD BARU
-            </button>
-          </form>
-          <p id="recoveryMessage"></p>
-        </div>
-      </div>
-    `);
-
-    document.getElementById("recoveryForm")
-      .addEventListener("submit", async (e) => {
-        e.preventDefault();
-
-        const password =
-          document.getElementById("newPassword").value;
-        const confirm =
-          document.getElementById("confirmPassword").value;
-        const msg =
-          document.getElementById("recoveryMessage");
-
-        if (password !== confirm) {
-          msg.textContent = "Password tidak sama.";
-          return;
-        }
-
-        const { error } = await db.auth.updateUser({
-          password: password
-        });
-
-        if (error) {
-          msg.textContent = error.message;
-          return;
-        }
-
-        msg.textContent =
-          "Password berhasil diperbarui. Silakan login kembali.";
-      });
-  }
-});
+/* =====================================
+   PEMERIKSAAN SESI
+===================================== */
 
 (async()=>{
- const {data:{session}} = await db.auth.getSession();
- if(session){
-  const {data:profile} = await db
-   .from("admin_profiles")
-   .select("full_name,role,is_active")
-   .eq("id",session.user.id)
-   .maybeSingle();
 
-  if(profile && profile.is_active){
-   openDashboard(profile);
-  }else{
-   await db.auth.signOut();
+ try {
+
+  const {data:{session},error} = await db.auth.getSession();
+
+  if(error) throw error;
+
+  if(session){
+
+   const {data:profile,error:profileError} = await db
+    .from("admin_profiles")
+    .select("full_name,role,is_active")
+    .eq("id",session.user.id)
+    .maybeSingle();
+
+   if(profileError) throw profileError;
+
+   if(profile && profile.is_active &&
+    ["super_admin","admin","operator"].includes(profile.role)){
+
+    openDashboard(profile);
+
+   }else{
+
+    await db.auth.signOut();
+
+   }
+
   }
+
+ } catch(error) {
+
+  console.error("Pemeriksaan sesi:",error.message);
+
  }
+
 })();
+
 </script>
 </body>
 </html>
